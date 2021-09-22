@@ -6,7 +6,7 @@ namespace StonePaperScissor
 {
     public class List
     {
-        string[] elements;
+        public string[] elements;
         public int selecteditem = 1;
         public int lenght = 0;
 

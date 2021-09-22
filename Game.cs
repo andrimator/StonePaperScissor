@@ -33,10 +33,10 @@ namespace StonePaperScissor
         {
             //Build
             Console.Clear();
-            string neworcontinue = "Nuevo Juego";
-            if (isNameset) neworcontinue = "Continuar";
-            string[] menulist = {neworcontinue, "Creditos", "???", "Salir", ""};
+            string[] menulist = {"Nuevo Juego", "Creditos", "???", "Salir", ""};
             List lstMainMenu = new List(menulist);
+            if (isNameset) lstMainMenu.elements[0] = "Continuar";
+
 
             //Menu Selection Loop
             while (true)
@@ -79,14 +79,31 @@ namespace StonePaperScissor
         #region Game
         private void Choosename()
         {
-            Console.Clear();
-            Graphics.DrawMargin(width, height, "Let me meet you", ConsoleColor.Yellow);
-            string[] list = { "Welcome to my land...", "I hope we can be friends, how are you named?", "C'mon, dont be shy hehehe", "Whats your name? :)"};
-            Graphics.DrawDelayedList(list, 5, 4,2500); //Delayed Text
-            Console.SetCursorPosition(2,6);
-            Thread.Sleep(3000);
-            Console.Write("Your answer: "); //Enter your name:
-            player = new Player(Console.ReadLine());
+            int initialdelay = 2500;
+            while (true)
+            {
+                Console.Clear();
+                Graphics.DrawMargin(width, height, "Let me meet you", ConsoleColor.Yellow);
+                string[] list = { "Welcome to my land...", "I hope we can be friends, how are you named?", "C'mon, dont be shy hehehe", "Whats your name? :)" };
+                Graphics.DrawDelayedList(list, 5, 4, initialdelay); //Delayed Text
+                Console.SetCursorPosition(2, 6);
+                Thread.Sleep(3000);
+
+                Console.Write("Your answer: "); //Enter your name:
+                player.name = Console.ReadLine();
+                if (player.name.Length > 8)
+                {
+                    Graphics.DrawError("[!] Tu nombre debe tener menos de 8 caracteres.", 2, height - 2);
+                    initialdelay = 0;
+                }
+                else if (player.name.Length == 0)
+                {
+                    Graphics.DrawError("[!] No puedes tener un nombre vacio.", 2, height - 2);
+                    initialdelay = 0;
+                }
+                else break;
+            }
+            
 
             Console.Clear();
             Graphics.DrawMargin(width, height, "I met you", ConsoleColor.DarkYellow);
@@ -160,11 +177,6 @@ namespace StonePaperScissor
             Graphics.DrawList(list, 5, 4);
             Console.ReadKey();
             return 0;
-        }
-
-        void GetGameResults()
-        {
-
         }
         public void SetResolution(int x, int y)
         {
@@ -247,17 +259,28 @@ namespace StonePaperScissor
             }
             return 4; //4 means no valid USER entry
         }
-        private static int GetInput(int x, int y) { return Graphics.DrawGetInputInt(x,y); }
         #endregion
-        private static void DelayMil(int miliseconds) { Thread.Sleep(miliseconds); }
-        /*public int Template()
+        /*public int LvLTemplate()
         {
-            //Level Itself
+            //Level Initial Draw
             Console.Clear();
             Graphics.DrawMargin(width, height, "Creditos", ConsoleColor.Yellow);
+
             //LevelConditions
             Console.Read();
             return 0;
+
+            //Input Detect
+            switch (Input.Detect())
+            {
+                case ConsoleKey.UpArrow:
+                    if (lstMainMenu.selecteditem != 1 || lstMainMenu.selecteditem != 0) lstMainMenu.selecteditem--;
+                    break;
+                case ConsoleKey.DownArrow:
+                    if (lstMainMenu.selecteditem <= lstMainMenu.lenght) lstMainMenu.selecteditem++;
+                    break;
+            }
+
         }*/
     }
 }
