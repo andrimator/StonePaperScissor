@@ -7,7 +7,7 @@ namespace StonePaperScissor
 {
     class Game
     {
-        public Player player;
+        public Player player = new Player();
         public static int level = 1;
         public static bool finished = false;
         private static bool isNameset;
@@ -31,35 +31,50 @@ namespace StonePaperScissor
         }
         public int MainMenu() //Devolver 0 para reiniciar, 2 para salir.
         {
+            //Build
             Console.Clear();
-            string neworcontinue = "1: Nuevo Juego";
-            if (isNameset) neworcontinue = "1: Continuar";
-            string[] menulist = {neworcontinue, "2: Creditos", "3: ???", "0: Salir", ""};
-            Graphics.DrawMargin(width,height,"Piedra, Papel, Tijeras", ConsoleColor.Green);
-            Graphics.DrawListCenterX(menulist,2);
+            string neworcontinue = "Nuevo Juego";
+            if (isNameset) neworcontinue = "Continuar";
+            string[] menulist = {neworcontinue, "Creditos", "???", "Salir", ""};
+            List lstMainMenu = new List(menulist);
 
-            switch (Input.Detect())
+            //Menu Selection Loop
+            while (true)
             {
-                case ConsoleKey.D1: //Comenzar
-                    if (!isNameset) Choosename();
-                    else Comenzar();
-                    break;
-                case ConsoleKey.D2:
-                    Credits();
-                    break;
-                case ConsoleKey.D3:
-                    Keyroom();
-                    break;
-                case ConsoleKey.D0: //Salir
-                    return 0;
-                default: //No en lista
-                    break;
+                Console.Clear();
+                Graphics.DrawMargin(width, height, "Piedra, Papel, Tijeras", ConsoleColor.Green);
+                //fix add element
+                lstMainMenu.DrawCenterX(2);
+                switch (Input.Detect())
+                {
+                    case ConsoleKey.UpArrow:
+                        if (lstMainMenu.selecteditem != 1 || lstMainMenu.selecteditem != 0) lstMainMenu.selecteditem--;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        if (lstMainMenu.selecteditem <= lstMainMenu.lenght) lstMainMenu.selecteditem++;
+                        break;
+                    case ConsoleKey.Enter:
+                        switch (lstMainMenu.selecteditem)
+                        {
+                            case 1: //Comenzar
+                                if (!isNameset) Choosename();
+                                while (Comenzar() != 0) ;
+                                break;
+                            case 2:
+                                Credits();
+                                break;
+                            case 3:
+                                if(player.keys >= 1) Keyroom();
+                                else Graphics.DrawError("[!] No tienes suficientes llaves!", 2, height - 2);
+                                break;
+                            case 4: //Salir
+                                return 0;
+                            default: //No en lista
+                                break;
+                        }
+                        break;
+                }
             }
-            return 1;
-
-
-            //ReturnConditions
-            
         }
         #region Game
         private void Choosename()
@@ -81,10 +96,6 @@ namespace StonePaperScissor
             Console.Write(" {0}.",player.name);
             Thread.Sleep(2000);
             isNameset = true;
-            while(true)
-            {
-                if(Comenzar() == 0) break;
-            }
         }
         public int Comenzar()
         {

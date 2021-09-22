@@ -12,6 +12,7 @@ namespace StonePaperScissor
         public int xplevel = 0;
         public int streak = 0;
         public bool currentlyOnStreak = false;
+        public int keys = 0;
 
         public void GetStats(int x, int y)
         {
@@ -20,8 +21,15 @@ namespace StonePaperScissor
         }
         public void LevelSuccess()
         {
+            int tmpstreak = streak;
             streak++;
-            if(streak>=1) currentlyOnStreak = true;
+            tmpstreak++;
+            if (streak >= 1) currentlyOnStreak = true;
+            if (tmpstreak == 5)
+            {
+                tmpstreak = 0;
+                keys++;
+            }
         }
         public void LevelFail()
         {

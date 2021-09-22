@@ -186,7 +186,14 @@ namespace StonePaperScissor
             }
             return input;
         }
-
+        public static void DrawError(string error, int x, int y)
+        {
+            Console.SetCursorPosition(x, y);
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(error);
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.ReadKey();
+        }
 
     }
 }
