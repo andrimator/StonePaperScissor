@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace StonePaperScissor
 {
@@ -6,6 +7,7 @@ namespace StonePaperScissor
     {
         static void Main(string[] args)
         {
+            Console.CursorVisible = false;
             //Sets global resolution for the game.
             int x = 50; int y = 10;
             Console.SetWindowSize(x+1, y+1);

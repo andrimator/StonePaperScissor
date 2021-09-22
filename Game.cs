@@ -10,7 +10,7 @@ namespace StonePaperScissor
         public Player player;
         public static int level = 1;
         public static bool finished = false;
-        private static bool nameset;
+        private static bool isNameset;
         private int width;
         private int height;
         private static string failmsg = "La consola ha ganado, ¡intentalo de nuevo!";
@@ -33,24 +33,24 @@ namespace StonePaperScissor
         {
             Console.Clear();
             string neworcontinue = "1: Nuevo Juego";
-            if (nameset) neworcontinue = "1: Continuar";
+            if (isNameset) neworcontinue = "1: Continuar";
             string[] menulist = {neworcontinue, "2: Creditos", "3: ???", "0: Salir", ""};
             Graphics.DrawMargin(width,height,"Piedra, Papel, Tijeras", ConsoleColor.Green);
             Graphics.DrawListCenterX(menulist,2);
 
-            switch (GetInput(width / 2 - 16, height - 2))
+            switch (Input.Detect())
             {
-                case 1: //Comenzar
-                    if (!nameset) Choosename();
+                case ConsoleKey.D1: //Comenzar
+                    if (!isNameset) Choosename();
                     else Comenzar();
                     break;
-                case 2:
+                case ConsoleKey.D2:
                     Credits();
                     break;
-                case 3:
+                case ConsoleKey.D3:
                     Keyroom();
                     break;
-                case 0: //Salir
+                case ConsoleKey.D0: //Salir
                     return 0;
                 default: //No en lista
                     break;
@@ -77,10 +77,10 @@ namespace StonePaperScissor
             Graphics.DrawMargin(width, height, "I met you", ConsoleColor.DarkYellow);
             Thread.Sleep(1000);
             Console.SetCursorPosition(2, 2);
-            Console.Write("Hello then"); Anim.SusDots(3, 1000);
+            Console.Write("Hello then"); Anim.SusDots(3, 700);
             Console.Write(" {0}.",player.name);
-            Thread.Sleep(3000);
-            nameset = true;
+            Thread.Sleep(2000);
+            isNameset = true;
             while(true)
             {
                 if(Comenzar() == 0) break;
@@ -180,45 +180,22 @@ namespace StonePaperScissor
         }
         private static string RandomBotGuess()
         {
-            var random = new Random();
-            var bytes = new byte[5];
-            random.NextBytes(bytes);
-            //ShowRandomBytes(bytes);
-            string bytedetect = bytes[3].ToString();
-            bool cond1 = System.DateTime.Now.Millisecond % 2 == 0;
+            Random random = new Random();
+            int rnd = random.Next(1,3);
+            Console.Write(rnd);
             string botguess = "N/A";
-            if (bytedetect.Contains('1') || bytedetect.Contains('3') || bytedetect.Contains('5'))
+            switch (rnd)
             {
-                if (cond1)
-                {
+                case 1:
                     botguess = "piedra";
-                }
-                else
-                {
+                    break;
+                case 2:
                     botguess = "papel";
-                }
-            }
-            else if (bytedetect.Contains('7') || bytedetect.Contains('9') || bytedetect.Contains('0'))
-            {
-                if (cond1)
-                {
-                    botguess = "papel";
-                }
-                else
-                {
+                    break;
+                case 3:
                     botguess = "tijera";
-                }
+                    break;
             }
-            else if (bytedetect.Contains('2') || bytedetect.Contains('6'))
-            {
-                if (cond1)
-                {
-                    botguess = "tijera";
-                }
-            }
-            else botguess = "piedra";
-
-            if (botguess != "piedra" || botguess != "tijera" || botguess != "papel") botguess = "tijera";
 
             return botguess;
         }
@@ -258,12 +235,6 @@ namespace StonePaperScissor
                 }
             }
             return 4; //4 means no valid USER entry
-        }
-        private static void ShowRandomBytes(byte[] input)
-        {
-            foreach (byte byteValue in input)
-                Console.Write("{0, 5}", byteValue);
-            Console.WriteLine();
         }
         private static int GetInput(int x, int y) { return Graphics.DrawGetInputInt(x,y); }
         #endregion
