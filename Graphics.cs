@@ -192,6 +192,8 @@ namespace StonePaperScissor
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(error);
             Console.ForegroundColor = ConsoleColor.Gray;
+            Console.Beep(440, 100);
+            Console.Beep(220, 100);
             Console.ReadKey();
         }
 

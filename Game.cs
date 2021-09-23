@@ -33,7 +33,7 @@ namespace StonePaperScissor
         {
             //Build
             Console.Clear();
-            string[] menulist = {"Nuevo Juego", "Creditos", "???", "Salir", ""};
+            string[] menulist = {"Nuevo Juego", "Creditos", "???", "Salir"};
             List lstMainMenu = new List(menulist);
             if (isNameset) lstMainMenu.elements[0] = "Continuar";
 
@@ -45,13 +45,17 @@ namespace StonePaperScissor
                 Graphics.DrawMargin(width, height, "Piedra, Papel, Tijeras", ConsoleColor.Green);
                 //fix add element
                 lstMainMenu.DrawCenterX(2);
+                Console.Write(lstMainMenu.selecteditem);
                 switch (Input.Detect())
                 {
                     case ConsoleKey.UpArrow:
-                        if (lstMainMenu.selecteditem != 1 || lstMainMenu.selecteditem != 0) lstMainMenu.selecteditem--;
+                        if (lstMainMenu.selecteditem > 1) lstMainMenu.selecteditem--;
+                        else Console.Beep(800, 80);
                         break;
                     case ConsoleKey.DownArrow:
-                        if (lstMainMenu.selecteditem <= lstMainMenu.lenght) lstMainMenu.selecteditem++;
+                        //Console.Beep(1800, 100);
+                        if (lstMainMenu.selecteditem < lstMainMenu.lenght) lstMainMenu.selecteditem++;
+                        else Console.Beep(800, 80);
                         break;
                     case ConsoleKey.Enter:
                         switch (lstMainMenu.selecteditem)
@@ -64,7 +68,7 @@ namespace StonePaperScissor
                                 Credits();
                                 break;
                             case 3:
-                                if(player.keys >= 1) Keyroom();
+                                if(player.keys >= 1) Keyroom(); //WORK IN PROGRESS: ROOM ACCESSED BY USING A KEY
                                 else Graphics.DrawError("[!] No tienes suficientes llaves!", 2, height - 2);
                                 break;
                             case 4: //Salir
@@ -79,7 +83,7 @@ namespace StonePaperScissor
         #region Game
         private void Choosename()
         {
-            int initialdelay = 2500;
+            int initialdelay = 2000;
             while (true)
             {
                 Console.Clear();
@@ -87,7 +91,7 @@ namespace StonePaperScissor
                 string[] list = { "Welcome to my land...", "I hope we can be friends, how are you named?", "C'mon, dont be shy hehehe", "Whats your name? :)" };
                 Graphics.DrawDelayedList(list, 5, 4, initialdelay); //Delayed Text
                 Console.SetCursorPosition(2, 6);
-                Thread.Sleep(3000);
+                Thread.Sleep(initialdelay);
 
                 Console.Write("Your answer: "); //Enter your name:
                 player.name = Console.ReadLine();
