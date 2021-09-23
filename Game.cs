@@ -204,7 +204,7 @@ namespace StonePaperScissor
         private static string RandomBotGuess()
         {
             Random random = new Random();
-            int rnd = random.Next(1,3);
+            int rnd = random.Next(1,4);
             Console.Write(rnd);
             string botguess = "N/A";
             switch (rnd)
