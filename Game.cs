@@ -15,8 +15,12 @@ namespace StonePaperScissor
         private int height;
         private static string failmsg = "La consola ha ganado, ¡intentalo de nuevo!";
         private static string winmsg = "Le has ganado al bot, ¡felicidades!";
-        public int Run() //Reiniciar main menu en caso de opcion invalida.
+        public int Run(int x, int y) //Reiniciar main menu en caso de opcion invalida.
         {
+            SetResolution(x, y);
+            Console.SetWindowSize(x + 1, y + 1);
+            Console.SetBufferSize(x + 1, y + 1);
+            Console.CursorVisible = false;
             do
             {
                 switch (MainMenu())
@@ -33,7 +37,7 @@ namespace StonePaperScissor
         {
             //Build
             Console.Clear();
-            string[] menulist = {"Nuevo Juego", "Creditos", "???", "Salir"};
+            string[] menulist = {"Nuevo Juego", "Controles", "Creditos", "???", "Salir"};
             List lstMainMenu = new List(menulist);
             if (isNameset) lstMainMenu.elements[0] = "Continuar";
 
@@ -44,17 +48,20 @@ namespace StonePaperScissor
                 Console.Clear();
                 Graphics.DrawMargin(width, height, "Piedra, Papel, Tijeras", ConsoleColor.Green);
                 //fix add element
+                if (isNameset) lstMainMenu.elements[0] = "Continuar";
                 lstMainMenu.DrawCenterX(2);
-                Console.Write(lstMainMenu.selecteditem);
+                //Console.Write(lstMainMenu.selecteditem);
                 switch (Input.Detect())
                 {
                     case ConsoleKey.UpArrow:
-                        if (lstMainMenu.selecteditem > 1) lstMainMenu.selecteditem--;
+                        if (lstMainMenu.selecteditem == 1) lstMainMenu.selecteditem = lstMainMenu.lenght;
+                        else if (lstMainMenu.selecteditem > 1) lstMainMenu.selecteditem--;
                         else Console.Beep(800, 80);
                         break;
                     case ConsoleKey.DownArrow:
                         //Console.Beep(1800, 100);
-                        if (lstMainMenu.selecteditem < lstMainMenu.lenght) lstMainMenu.selecteditem++;
+                        if (lstMainMenu.selecteditem == lstMainMenu.lenght) lstMainMenu.selecteditem = 1;
+                        else if (lstMainMenu.selecteditem < lstMainMenu.lenght) lstMainMenu.selecteditem++;
                         else Console.Beep(800, 80);
                         break;
                     case ConsoleKey.Enter:
@@ -65,13 +72,15 @@ namespace StonePaperScissor
                                 while (Comenzar() != 0) ;
                                 break;
                             case 2:
-                                Credits();
                                 break;
                             case 3:
+                                Credits();
+                                break;
+                            case 4:
                                 if(player.keys >= 1) Keyroom(); //WORK IN PROGRESS: ROOM ACCESSED BY USING A KEY
                                 else Graphics.DrawError("[!] No tienes suficientes llaves!", 2, height - 2);
                                 break;
-                            case 4: //Salir
+                            case 5: //Salir
                                 return 0;
                             default: //No en lista
                                 break;
@@ -83,7 +92,7 @@ namespace StonePaperScissor
         #region Game
         private void Choosename()
         {
-            int initialdelay = 2000;
+            int initialdelay = /*2*/000;
             while (true)
             {
                 Console.Clear();
@@ -124,13 +133,62 @@ namespace StonePaperScissor
             Console.Clear();
             Graphics.DrawMargin(width, height, "Coliseo Demano", ConsoleColor.Blue);
             Graphics.DrawStatsOnScreen(player);
-            Console.SetCursorPosition(width-9, height-2);
-            Graphics.ColorText("X: Salir", ConsoleColor.Red);
+            Console.SetCursorPosition(width-11, height-2);
+            Graphics.ColorText("ESC: Salir", ConsoleColor.Red);
             //LevelConditions
             Console.SetCursorPosition(2, 2);
-            Console.Write("Piedra, papel o tijera"); Anim.SusDots(3, 800);
-            Console.Write(" Elige alguno: ");
-            string playerguess = Console.ReadLine();
+            Console.Write("Piedra, papel o tijera...");
+            Thread.Sleep(400);
+            //Console.Write(" Elige alguno: ");
+            string playerguess = "" /*= Console.ReadLine()*/;
+            string[] choices = { "Piedra", "Papel", "Tijera" };
+            List lstChoices = new List(choices);
+
+            while (true)
+            {
+                lstChoices.DrawCenterX(4);
+                switch (Input.Detect())
+                {
+                    case ConsoleKey.Escape:
+                        return 0;
+                    case ConsoleKey.UpArrow:
+                        if (lstChoices.selecteditem == 1) lstChoices.selecteditem = lstChoices.lenght;
+                        else if (lstChoices.selecteditem > 1) lstChoices.selecteditem--;
+                        else Console.Beep(800, 80);
+                        break;
+                    case ConsoleKey.DownArrow:
+                        //Console.Beep(1800, 100);
+                        if (lstChoices.selecteditem == lstChoices.lenght) lstChoices.selecteditem = 1;
+                        else if (lstChoices.selecteditem < lstChoices.lenght) lstChoices.selecteditem++;
+                        else Console.Beep(800, 80);
+                        break;
+                    case ConsoleKey.Enter:
+                        switch (lstChoices.selecteditem)
+                        {
+                            case 1:
+                                playerguess = "piedra";
+                                break;
+                            case 2:
+                                playerguess = "papel";
+                                break;
+                            case 3:
+                                playerguess = "tijera";
+                                break;
+                        }
+                        break;
+                }
+                if (playerguess != "") break;
+            }
+            Console.Clear();
+            Graphics.DrawMargin(width, height, "Coliseo Demano", ConsoleColor.Blue);
+            Graphics.DrawStatsOnScreen(player);
+            Console.SetCursorPosition(width - 11, height - 2);
+            Graphics.ColorText("ESC: Salir", ConsoleColor.Red);
+            //LevelConditions
+            Console.SetCursorPosition(2, 2);
+            Console.Write("Piedra, papel o tijera...");
+            //StartRound(playerguess);
+
             switch (StartRound(playerguess))
             {
                 case 1: //WIN
@@ -177,7 +235,7 @@ namespace StonePaperScissor
             Console.Clear();
             Graphics.DrawMargin(width, height, "Keyroom", ConsoleColor.Magenta);
             //LevelConditions
-            string[] list = { "Language: C#", "IDE: Visual Studio Community 2019", "Created by @andrimator", "Hope you like it :)", "Made in 5 hours lol" };
+            string[] list = { "Bienvenido al sitio donde los secretos residen." };
             Graphics.DrawList(list, 5, 4);
             Console.ReadKey();
             return 0;
@@ -201,7 +259,7 @@ namespace StonePaperScissor
             string botguess = RandomBotGuess();
 
             Console.SetCursorPosition(2, 4);
-            Console.Write("Tu: {0}| El bot: {1}", guess, botguess);
+            Console.Write("Tu: {0} | El bot: {1}", guess, botguess);
 
             return CompareMatchResults(guess,botguess);
         }
@@ -209,7 +267,7 @@ namespace StonePaperScissor
         {
             Random random = new Random();
             int rnd = random.Next(1,4);
-            Console.Write(rnd);
+            //Console.Write(rnd);
             string botguess = "N/A";
             switch (rnd)
             {
